@@ -1,0 +1,26 @@
+{
+  "name": "line-code-test",
+  "version": "0.0.1",
+  "description": "lineCodeTest",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rimraf:help": "rimraf --help",
+    "css:clear": "rimraf ./css",
+    "css:prefix": "gulp autoprefix",
+    "scss": "npm run scss:production",
+    "scss:production": "npm-run-all -s css:clear scss:compile:production css:prefix",
+    "scss:develop": "npm-run-all -s css:clear scss:compile:develop css:prefix",
+    "scss:compile:production": "node-sass ./scss --output-style compressed --output ./css",
+    "scss:compile:develop": "node-sass ./scss --output-style expanded --indent-width 4 --output ./css"
+  },
+  "author": "Shohei Ono",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "node-sass": "^4.5.2",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1"
+  }
+}
