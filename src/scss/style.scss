@@ -45,16 +45,15 @@
 	}
 
 	&__item {
+		position: relative;
 		display: flex;
 		align-items: center;
 		padding: 6px;
 		box-sizing: border-box;
-		border: 1px $baseColor solid;
-		border-bottom: 1px transparent solid;
 		background-color: #e4e4e4;
 
-		&:last-of-type {
-			border-bottom: 1px $baseColor solid;
+		& + &{
+			border-top: 1px rgba(123, 123, 123, 0.4) solid;
 		}
 
 		&--history {
@@ -62,7 +61,6 @@
 		}
 
 		&--selected {
-			box-shadow: 1px 1px 1px 1px #d2e6cb inset, -1px -1px 1px 1px #4f6547 inset;
 			background-color: #9dce8c;
 		}
 
@@ -75,6 +73,22 @@
 		&-name {
 			flex: 1 1 auto;
 			margin-left: 6px;
+		}
+
+		&-remove {
+			transform: scale(1, 1);
+			position: absolute;
+			top: 1px;
+			right: 1px;
+			height: 100%;
+			width: 100px;
+			background-color: #f0f;
+			transition: 200ms linear transform;
+			transform: translate(0, 0) scale(1, 1);
+
+			&--hide {
+				transform: translate(50%, 0) scale(0, 1);
+			}
 		}
 	}
 }

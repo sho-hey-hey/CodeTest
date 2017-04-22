@@ -258,9 +258,6 @@ function createList(items) {
 		itemElem.classList.add(CLASS_LIST_ITEM);
 		itemElem.dataset['id'] = item.id;
 		itemElem.addEventListener('click', listItemClick, false);
-		if (item.num) {
-			itemElem.classList.add('search-list__item--history');
-		}
 
 		itemImgElem.classList.add('search-list__item-img');
 		itemImgElem.src = item.logo;
@@ -268,10 +265,24 @@ function createList(items) {
 		itemImgElem.height = 40;
 
 		itemNameElem.classList.add('search-list__item-name');
-		itemNameElem.innerText = itemNameElem.title = item.name;
+		itemNameElem.innerText = itemElem.title = item.name;
 
 		itemElem.appendChild(itemImgElem);
 		itemElem.appendChild(itemNameElem);
+
+		if (item.num) {
+			const itemDeleteConfirmElem = document.createElement('span');
+			const itemDeleteElem = document.createElement('div');
+			itemElem.classList.add('search-list__item--history');
+			itemDeleteConfirmElem.innerText = '×';
+			itemDeleteElem.classList.add('search-list__item-remove');
+			itemDeleteElem.classList.add('search-list__item-remove--hide');
+			itemDeleteElem.innerText = 'Remove history';
+
+			itemElem.appendChild(itemDeleteConfirmElem);
+			itemElem.appendChild(itemDeleteElem);
+		}
+
 		searchList.appendChild(itemElem);
 	}
 }
