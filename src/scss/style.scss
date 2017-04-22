@@ -57,6 +57,10 @@
 			border-bottom: 1px $baseColor solid;
 		}
 
+		&--history {
+			background-color: #a2ebf3;
+		}
+
 		&--selected {
 			box-shadow: 1px 1px 1px 1px #d2e6cb inset, -1px -1px 1px 1px #4f6547 inset;
 			background-color: #9dce8c;
@@ -69,6 +73,7 @@
 		}
 
 		&-name {
+			flex: 1 1 auto;
 			margin-left: 6px;
 		}
 	}

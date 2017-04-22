@@ -151,17 +151,29 @@ function listItemClick(e) {
 	entryLog(id);
 }
 
+/**
+ * ログ追加
+ * @param {number} id 
+ */
 function entryLog(id) {
-	if(id === null) return;
+	if (id === null) return;
 
 	let log = LocalStorageService.getItem(`${id}`);
-	if(log) {
+	if (log) {
 		log.num++;
 		LocalStorageService.removeItem(`${id}`);
 	} else {
 		log = { id: id, num: 1 };
 	}
 	LocalStorageService.setItem(`${id}`, log);
+}
+
+/**
+ * ログの取得
+ * @param {number} id 
+ */
+function getLog(id) {
+	return LocalStorageService.getItem(`${id}`);
 }
 
 /**
@@ -214,15 +226,36 @@ function getItems(name) {
  */
 function createList(items) {
 	searchList.innerHTML = '';
-	for (let i = 0, len = items.length; i < len; ++i) {
-		const item = items[i];
+	const tmpItems = items.sort((a, b) => {
+		const aLog = getLog(a.id);
+		const bLog = getLog(b.id);
+		const aNum = aLog ? aLog.num : 0;
+		const bNum = bLog ? bLog.num : 0;
+
+		a.num = aNum;
+		b.num = bNum;
+
+		if (aNum < bNum) {
+			return 1;
+		} else if (aNum > bNum) {
+			return -1;
+		} else {
+			return 0;
+		}
+
+	});
+	for (let i = 0, len = tmpItems.length; i < len; ++i) {
+		const item = tmpItems[i];
 		const itemElem = document.createElement('li');
 		const itemImgElem = document.createElement('img');
 		const itemNameElem = document.createElement('span');
 
-		itemElem.classList.add('search-list__item');
+		itemElem.classList.add(CLASS_LIST_ITEM);
 		itemElem.dataset['id'] = item.id;
 		itemElem.addEventListener('click', listItemClick, false);
+		if (item.num) {
+			itemElem.classList.add('search-list__item--history');
+		}
 
 		itemImgElem.classList.add('search-list__item-img');
 		itemImgElem.src = item.logo;
