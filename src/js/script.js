@@ -17,16 +17,15 @@ function setElement() {
  * イベント設定
  */
 function setEvent() {
-	input.addEventListener('keyup', keyDownInput, false);
+	input.addEventListener('keyup', search, false);
 	input.addEventListener('focus', focusIn, false);
-	document.addEventListener('click', focusOut, false);
+	document.addEventListener('click', focusOut, true);
 }
 
 /**
- * 入力フォームに入力されたときのイベント
- * @param {KeyEvent} e 
+ * 検索
  */
-function keyDownInput(e) {
+function search() {
 	const value = input.value.toLowerCase();
 	let tmpItems = [];
 	if(value === '') {
@@ -78,6 +77,8 @@ function listItemClick(e) {
 	if (!item) return;
 
 	input.value = item.name;
+	search();
+	input.focus();
 }
 
 /**
