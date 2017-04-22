@@ -17,8 +17,24 @@ function setElement() {
  * イベント設定
  */
 function setEvent() {
+	input.addEventListener('keyup', keyDownInput, false);
 	input.addEventListener('focus', focusIn, false);
 	document.addEventListener('click', focusOut, false);
+}
+
+/**
+ * 入力フォームに入力されたときのイベント
+ * @param {KeyEvent} e 
+ */
+function keyDownInput(e) {
+	const value = input.value.toLowerCase();
+	let tmpItems = [];
+	if(value === '') {
+		tmpItems = appData.items;
+	} else {
+		tmpItems = getItems(value)
+	}
+	createList(tmpItems);
 }
 
 /**
@@ -38,25 +54,69 @@ function focusOut(e) {
 	let target = e.target;
 	let tagName = target.tagName.toLowerCase();
 	let noFocusOut = false;
-	while(tagName !== 'html' && !noFocusOut) {
-		if(target.id === ID_CONTENT_SEARCH) {
+	while (tagName !== 'html' && !noFocusOut) {
+		if (target.id === ID_CONTENT_SEARCH) {
 			noFocusOut = true;
 		}
 		target = target.parentElement;
 		tagName = target.tagName.toLowerCase();
 	}
 
-	if(!noFocusOut) {
+	if (!noFocusOut) {
 		searchList.classList.add(CLASS_LIST_HIDE);
 	}
 }
 
+/**
+ * リストの項目をクリックしたときの処理
+ * @param {MouseEvent} e 
+ */
 function listItemClick(e) {
 	const target = e.currentTarget;
-	const id = target.dataset['id'];
+	const id = +target.dataset['id'];
+	const item = getItem(id);
+	if (!item) return;
+
+	input.value = item.name;
 }
 
+/**
+ * appのデータの取得
+ * @param {number} id 
+ */
+function getItem(id) {
+	let item = null;
+	for (let i = 0, len = appData.items.length; i < len; ++i) {
+		if (appData.items[i].id === id) {
+			item = appData.items[i];
+			break;
+		}
+	}
+	return item;
+}
+
+/**
+ * 一致するデータ取得
+ * @param {string} name 
+ */
+function getItems(name) {
+	let items = [];
+	for (let i = 0, len = appData.items.length; i < len; ++i) {
+		const item = appData.items[i];
+		const itemName = item.name.toLowerCase();
+		if (itemName.indexOf(name) > -1) {
+			items.push(item);
+		}
+	}
+	return items;
+}
+
+/**
+ * リスト作成
+ * @param {} items 
+ */
 function createList(items) {
+	searchList.innerHTML = '';
 	for (let i = 0, len = items.length; i < len; ++i) {
 		const item = items[i];
 		const itemElem = document.createElement('li');
