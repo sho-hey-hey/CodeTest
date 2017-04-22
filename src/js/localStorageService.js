@@ -40,7 +40,7 @@ LocalStorageService.getItem = function(key) {
 	const data = localStorage.getItem(key);
 	if(!data) return null;
 
-	return data.value;
+	return JSON.parse(data).value;
 }
 
 /**
