@@ -4,6 +4,8 @@ import { LocalStorageService } from './localStorageService';
 const CLASS_LIST_HIDE = 'search-list--hide';
 const CLASS_LIST_ITEM = 'search-list__item';
 const CLASS_LIST_ITEM_SELECTED = `${CLASS_LIST_ITEM}--selected`;
+const CLASS_LIST_ITEM_REMOVE = `${CLASS_LIST_ITEM}-remove`;
+const CLASS_LIST_ITEM_REMOVE_HIDE = `${CLASS_LIST_ITEM_REMOVE}--hide`;
 let input;
 let inputValue = '';
 let searchList;
@@ -97,9 +99,9 @@ function changeSelectedItem(isNext) {
  * すべての削除ボタンを隠す
  */
 function hideRemoveButton() {
-	const removeButtons = document.querySelectorAll('.search-list__item-remove:not(.search-list__item-remove--hide)');
+	const removeButtons = document.querySelectorAll(`.${CLASS_LIST_ITEM_REMOVE}:not(.${CLASS_LIST_ITEM_REMOVE_HIDE})`);
 	for (let i = 0, len = removeButtons.length; i < len; ++i) {
-		removeButtons[i].classList.add('search-list__item-remove--hide');
+		removeButtons[i].classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
 	}
 }
 
@@ -111,7 +113,7 @@ function clickRemoveConfirmButton(removeButton) {
 	return (e) => {
 		e.stopPropagation();
 		hideRemoveButton();
-		removeButton.classList.remove('search-list__item-remove--hide');
+		removeButton.classList.remove(CLASS_LIST_ITEM_REMOVE_HIDE);
 	};
 }
 
@@ -123,7 +125,7 @@ function clickRemoveConfirmButton(removeButton) {
 function clickRemoveButton(id, removeButton) {
 	return (e) => {
 		e.stopPropagation();
-		removeButton.classList.add('search-list__item-remove--hide');
+		removeButton.classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
 		LocalStorageService.removeItem(`${id}`);
 		search(true);
 	};
@@ -140,6 +142,9 @@ function search(isForce) {
 	inputValue = value;
 	if (inputValue === '') {
 		tmpItems = appData.items;
+		for (let i = 0, len = tmpItems.length; i < len; ++i) {
+			tmpItems[i].decolateName = tmpItems[i].name;
+		}
 	} else {
 		tmpItems = getItems(inputValue)
 	}
@@ -250,7 +255,15 @@ function getItems(name) {
 	for (let i = 0, len = appData.items.length; i < len; ++i) {
 		const item = appData.items[i];
 		const itemName = item.name.toLowerCase();
+		const reg = new RegExp(name, 'gi');
+		const split = item.name.split(reg);
+		const match = item.name.match(reg);
 		if (itemName.indexOf(name) > -1) {
+			item.decolateName = '';
+			for (let i = 0, len = split.length; i < len; ++i) {
+				item.decolateName += split[i];
+				if (match[i]) item.decolateName += `<span class="search-list__item-bold">${match[i]}</span>`;
+			}
 			items.push(item);
 		}
 	}
@@ -258,12 +271,11 @@ function getItems(name) {
 }
 
 /**
- * リスト作成
- * @param {} items 
+ * ソートした項目取得
+ * @param {[]} items 
  */
-function createList(items) {
-	searchList.innerHTML = '';
-	const tmpItems = items.sort((a, b) => {
+function getSortItems(items) {
+	return items.sort((a, b) => {
 		const aLog = getLog(a.id);
 		const bLog = getLog(b.id);
 		const aNum = aLog ? aLog.num : 0;
@@ -284,8 +296,16 @@ function createList(items) {
 			}
 			return 0;
 		}
-
 	});
+}
+
+/**
+ * リスト作成
+ * @param {} items 
+ */
+function createList(items) {
+	searchList.innerHTML = '';
+	const tmpItems = getSortItems(items);
 	for (let i = 0, len = tmpItems.length; i < len; ++i) {
 		const item = tmpItems[i];
 		const itemElem = document.createElement('li');
@@ -294,6 +314,7 @@ function createList(items) {
 
 		itemElem.classList.add(CLASS_LIST_ITEM);
 		itemElem.dataset['id'] = item.id;
+		itemElem.title = item.name;
 		itemElem.addEventListener('click', listItemClick, false);
 
 		itemImgElem.classList.add('search-list__item-img');
@@ -302,7 +323,7 @@ function createList(items) {
 		itemImgElem.height = 40;
 
 		itemNameElem.classList.add('search-list__item-name');
-		itemNameElem.innerText = itemElem.title = item.name;
+		itemNameElem.innerHTML = item.decolateName || item.name;
 
 		itemElem.appendChild(itemImgElem);
 		itemElem.appendChild(itemNameElem);
@@ -314,9 +335,9 @@ function createList(items) {
 			itemDeleteConfirmElem.classList.add('search-list__item-button');
 			itemDeleteConfirmElem.innerText = '×';
 			itemDeleteConfirmElem.addEventListener('click', clickRemoveConfirmButton(itemDeleteElem), false);
-			itemDeleteElem.classList.add('search-list__item-remove');
-			itemDeleteElem.classList.add('search-list__item-remove--hide');
-			itemDeleteElem.innerText = 'Remove history';
+			itemDeleteElem.classList.add(CLASS_LIST_ITEM_REMOVE);
+			itemDeleteElem.classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
+			itemDeleteElem.innerHTML = 'remove<br>history';
 			itemDeleteElem.addEventListener('click', clickRemoveButton(item.id, itemDeleteElem), false);
 
 			itemElem.appendChild(itemDeleteConfirmElem);
