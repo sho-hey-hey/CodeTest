@@ -50,7 +50,7 @@ function createList(items) {
 		const itemNameElem = document.createElement('span');
 
 		itemElem.classList.add('search-list__item');
-		itemElem.dataset['id'] = data.id;
+		itemElem.dataset['id'] = item.id;
 		itemElem.addEventListener('click', listItemClick, false);
 
 		itemImgElem.classList.add('search-list__item-img');
