@@ -22,7 +22,7 @@ function setElement() {
 function setEvent() {
 	input.addEventListener('keyup', search, false);
 	input.addEventListener('focus', focusIn, false);
-	searchList.addEventListener('mousemove', selectListItem, false);
+	searchList.addEventListener('mousemove', mouseMoveList, false);
 	document.addEventListener('click', focusOut, true);
 	document.addEventListener('keydown', keyDown, false);
 }
@@ -33,34 +33,53 @@ function setEvent() {
  */
 function keyDown(e) {
 	const keyCode = e.code;
-	keyArrow(keyCode);
+	keyEventVisibleList(keyCode);
 }
 
-function keyArrow(keyCode) {
+/**
+ * リストが表示されているときに受けるイベント
+ * @param {string} keyCode 
+ */
+function keyEventVisibleList(keyCode) {
 	if (!searchList.classList.contains(CLASS_LIST_HIDE)) {
 		switch (keyCode) {
 			case 'ArrowUp':
-				moveItem(false);
+				changeSelectedItem(false);
 				break;
 			case 'ArrowDown':
-				moveItem(true);
+				changeSelectedItem(true);
+				break;
+			case 'Enter':
+				const selectedItem = searchList.querySelector(`.${CLASS_LIST_ITEM_SELECTED}`);
+				const id = selectedItem ? +selectedItem.dataset['id'] : null;
+				setInputValue(id);
+				break;
+			default:
 				break;
 		}
 	}
 }
 
-function selectListItem(e) {
+/**
+ * リストのmoveイベント
+ * @param {MouseEvent} e 
+ */
+function mouseMoveList(e) {
 	const target = e.target;
-	if(target.classList.contains(CLASS_LIST_ITEM_SELECTED)) return;
+	if (!target.classList.contains(CLASS_LIST_ITEM) || target.classList.contains(CLASS_LIST_ITEM_SELECTED)) return;
 
 	const items = searchList.querySelectorAll(`.${CLASS_LIST_ITEM_SELECTED}`);
-	for(let i=0,len=items.length;i<len;++i) {
+	for (let i = 0, len = items.length; i < len; ++i) {
 		items[i].classList.remove(CLASS_LIST_ITEM_SELECTED);
 	}
 	target.classList.add(CLASS_LIST_ITEM_SELECTED);
 }
 
-function moveItem(isNext) {
+/**
+ * 選択中の項目を変更する
+ * @param {boolean} isNext 
+ */
+function changeSelectedItem(isNext) {
 	const selectedApp = document.querySelector(`.${CLASS_LIST_ITEM}.${CLASS_LIST_ITEM_SELECTED}`);
 	if (selectedApp) {
 		const targetApp = isNext ? selectedApp.nextElementSibling : selectedApp.previousElementSibling;
@@ -126,6 +145,14 @@ function focusOut(e) {
 function listItemClick(e) {
 	const target = e.currentTarget;
 	const id = +target.dataset['id'];
+	setInputValue(id);
+}
+
+/**
+ * 入力フォームの中身を対象IDの名前にする
+ * @param {number} id 
+ */
+function setInputValue(id) {
 	const item = getItem(id);
 	if (!item) return;
 
