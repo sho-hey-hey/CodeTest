@@ -18,7 +18,7 @@ function setElement() {
  */
 function setEvent() {
 	input.addEventListener('focus', focusIn, false);
-	input.addEventListener('focusout', focusOut, false);
+	document.addEventListener('click', focusOut, false);
 }
 
 /**
@@ -34,7 +34,21 @@ function focusIn(e) {
  * @param {MouseEvent} e 
  */
 function focusOut(e) {
-	searchList.classList.add(CLASS_LIST_HIDE);
+	const ID_CONTENT_SEARCH = 'contentSearch';
+	let target = e.target;
+	let tagName = target.tagName.toLowerCase();
+	let noFocusOut = false;
+	while(tagName !== 'html' && !noFocusOut) {
+		if(target.id === ID_CONTENT_SEARCH) {
+			noFocusOut = true;
+		}
+		target = target.parentElement;
+		tagName = target.tagName.toLowerCase();
+	}
+
+	if(!noFocusOut) {
+		searchList.classList.add(CLASS_LIST_HIDE);
+	}
 }
 
 function listItemClick(e) {
