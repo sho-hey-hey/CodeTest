@@ -93,28 +93,48 @@ function changeSelectedItem(isNext) {
 	}
 }
 
+/**
+ * すべての削除ボタンを隠す
+ */
+function hideRemoveButton() {
+	const removeButtons = document.querySelectorAll('.search-list__item-remove:not(.search-list__item-remove--hide)');
+	for (let i = 0, len = removeButtons.length; i < len; ++i) {
+		removeButtons[i].classList.add('search-list__item-remove--hide');
+	}
+}
+
+/**
+ * 削除確認ボタンをおした時のメソッドを返す
+ * @param {HTMLElement} removeButton 
+ */
 function clickRemoveConfirmButton(removeButton) {
 	return (e) => {
 		e.stopPropagation();
+		hideRemoveButton();
 		removeButton.classList.remove('search-list__item-remove--hide');
 	};
 }
 
+/**
+ * 削除ボタンを押したときのメソッドを返す
+ * @param {number} id 
+ * @param {HTMLElement} removeButton 
+ */
 function clickRemoveButton(id, removeButton) {
 	return (e) => {
 		e.stopPropagation();
 		removeButton.classList.add('search-list__item-remove--hide');
 		LocalStorageService.removeItem(`${id}`);
-		search();
+		search(true);
 	};
 }
 
 /**
  * 検索
  */
-function search() {
+function search(isForce) {
 	const value = input.value.toLowerCase();
-	if (value === inputValue) return;
+	if (value === inputValue && !isForce) return;
 
 	let tmpItems = [];
 	inputValue = value;
@@ -152,6 +172,7 @@ function focusOut(e) {
 	}
 
 	if (!noFocusOut) {
+		hideRemoveButton();
 		searchList.classList.add(CLASS_LIST_HIDE);
 	}
 }
