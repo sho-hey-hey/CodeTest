@@ -1,0 +1,13 @@
+$baseColor: #4e4e4e;
+
+body {
+	color: $baseColor;
+}
+
+input {
+	&[type="text"] {
+		padding: 4px;
+		border: 1px $baseColor solid;
+		border-radius: 4px;
+	}
+}

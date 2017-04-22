@@ -1,0 +1,28 @@
+@import "reset";
+@import "parts";
+
+.content {
+	display: block;
+	margin: 10px;
+}
+
+.input-list {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	&__term {
+		font-weight: bold;
+	}
+
+	&__data {
+		margin-left: 6px;
+	}
+}
+
+.search-list {
+	
+	&--hide {
+		display: none;
+	}
+}
