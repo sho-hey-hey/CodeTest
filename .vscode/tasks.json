@@ -1,0 +1,28 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "0.1.0",
+	"command": "npm",
+	"isShellCommand": false,
+	"showOutput": "always",
+	"suppressTaskName": true,
+	"echoCommand": true,
+	"taskSelector": "run",
+	"tasks": [
+		{
+			"isBuildCommand": true,
+			"taskName": "js",
+			"args": [
+				"run",
+				"js"
+			]
+		},
+		{
+			"taskName": "scss",
+			"args": [
+				"run",
+				"scss"
+			]
+		}
+	],
+}

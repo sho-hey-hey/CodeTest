@@ -5,22 +5,30 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "rimraf:help": "rimraf --help",
-    "css:clear": "rimraf ./css",
+    "css:clean": "rimraf ./css",
     "css:prefix": "gulp autoprefix",
-    "scss": "npm run scss:production",
-    "scss:production": "npm-run-all -s css:clear scss:compile:production css:prefix",
-    "scss:develop": "npm-run-all -s css:clear scss:compile:develop css:prefix",
-    "scss:compile:production": "node-sass ./scss --output-style compressed --output ./css",
-    "scss:compile:develop": "node-sass ./scss --output-style expanded --indent-width 4 --output ./css"
+    "scss": "npm run scss:develop",
+    "scss:production": "npm-run-all -s css:clean scss:compile:production css:prefix",
+    "scss:develop": "npm-run-all -s css:clean scss:compile:develop css:prefix",
+    "scss:compile:production": "node-sass ./src/scss --output-style compressed --output ./css",
+    "scss:compile:develop": "node-sass ./src/scss --output-style expanded --indent-width 4 --output ./css",
+    "js": "npm-run-all -s js:clean js:webpack:develop",
+    "js:clean": "rimraf ./js",
+    "js:webpack:production": "webpack --config webpack.config.js -p",
+    "js:webpack:develop": "webpack --config webpack.config.js -d"
   },
   "author": "Shohei Ono",
   "license": "ISC",
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "node-sass": "^4.5.2",
     "npm-run-all": "^4.0.2",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "webpack": "^2.4.1"
   }
 }

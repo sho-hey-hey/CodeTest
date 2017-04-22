@@ -1,5 +1,6 @@
 module.exports = {
-	cssDir: 'css/',
-	scssDir: 'scss/',
-	jsDir: 'js/'
+	distStyleDir: 'css/',
+	distScriptDir: 'js/',
+	styleDir: 'src/scss/',
+	scriptDir: 'src/js/'
 };
