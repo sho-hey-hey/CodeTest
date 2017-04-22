@@ -54,6 +54,7 @@ function keyEventVisibleList(keyCode) {
 				const selectedItem = searchList.querySelector(`.${CLASS_LIST_ITEM_SELECTED}`);
 				const id = selectedItem ? +selectedItem.dataset['id'] : null;
 				setInputValue(id);
+				entryLog(id);
 				break;
 			default:
 				break;
@@ -147,6 +148,20 @@ function listItemClick(e) {
 	const target = e.currentTarget;
 	const id = +target.dataset['id'];
 	setInputValue(id);
+	entryLog(id);
+}
+
+function entryLog(id) {
+	if(id === null) return;
+
+	let log = LocalStorageService.getItem(`${id}`);
+	if(log) {
+		log.num++;
+		LocalStorageService.removeItem(`${id}`);
+	} else {
+		log = { id: id, num: 1 };
+	}
+	LocalStorageService.setItem(`${id}`, log);
 }
 
 /**
