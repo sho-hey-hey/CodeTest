@@ -93,6 +93,22 @@ function changeSelectedItem(isNext) {
 	}
 }
 
+function clickRemoveConfirmButton(removeButton) {
+	return (e) => {
+		e.stopPropagation();
+		removeButton.classList.remove('search-list__item-remove--hide');
+	};
+}
+
+function clickRemoveButton(id, removeButton) {
+	return (e) => {
+		e.stopPropagation();
+		removeButton.classList.add('search-list__item-remove--hide');
+		LocalStorageService.removeItem(`${id}`);
+		search();
+	};
+}
+
 /**
  * 検索
  */
@@ -274,10 +290,13 @@ function createList(items) {
 			const itemDeleteConfirmElem = document.createElement('span');
 			const itemDeleteElem = document.createElement('div');
 			itemElem.classList.add('search-list__item--history');
+			itemDeleteConfirmElem.classList.add('search-list__item-button');
 			itemDeleteConfirmElem.innerText = '×';
+			itemDeleteConfirmElem.addEventListener('click', clickRemoveConfirmButton(itemDeleteElem), false);
 			itemDeleteElem.classList.add('search-list__item-remove');
 			itemDeleteElem.classList.add('search-list__item-remove--hide');
 			itemDeleteElem.innerText = 'Remove history';
+			itemDeleteElem.addEventListener('click', clickRemoveButton(item.id, itemDeleteElem), false);
 
 			itemElem.appendChild(itemDeleteConfirmElem);
 			itemElem.appendChild(itemDeleteElem);
