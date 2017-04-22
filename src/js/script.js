@@ -1,7 +1,10 @@
 import { asyncConnect } from './asyncService';
 
 const CLASS_LIST_HIDE = 'search-list--hide';
+const CLASS_LIST_ITEM = 'search-list__item';
+const CLASS_LIST_ITEM_SELECTED = `${CLASS_LIST_ITEM}--selected`;
 let input;
+let inputValue = '';
 let searchList;
 let appData = {};
 
@@ -19,7 +22,54 @@ function setElement() {
 function setEvent() {
 	input.addEventListener('keyup', search, false);
 	input.addEventListener('focus', focusIn, false);
+	searchList.addEventListener('mousemove', selectListItem, false);
 	document.addEventListener('click', focusOut, true);
+	document.addEventListener('keydown', keyDown, false);
+}
+
+/**
+ * KeyDownイベント
+ * @param {KeyEvent} e 
+ */
+function keyDown(e) {
+	const keyCode = e.code;
+	keyArrow(keyCode);
+}
+
+function keyArrow(keyCode) {
+	if (!searchList.classList.contains(CLASS_LIST_HIDE)) {
+		switch (keyCode) {
+			case 'ArrowUp':
+				moveItem(false);
+				break;
+			case 'ArrowDown':
+				moveItem(true);
+				break;
+		}
+	}
+}
+
+function selectListItem(e) {
+	const target = e.target;
+	if(target.classList.contains(CLASS_LIST_ITEM_SELECTED)) return;
+
+	const items = searchList.querySelectorAll(`.${CLASS_LIST_ITEM_SELECTED}`);
+	for(let i=0,len=items.length;i<len;++i) {
+		items[i].classList.remove(CLASS_LIST_ITEM_SELECTED);
+	}
+	target.classList.add(CLASS_LIST_ITEM_SELECTED);
+}
+
+function moveItem(isNext) {
+	const selectedApp = document.querySelector(`.${CLASS_LIST_ITEM}.${CLASS_LIST_ITEM_SELECTED}`);
+	if (selectedApp) {
+		const targetApp = isNext ? selectedApp.nextElementSibling : selectedApp.previousElementSibling;
+		if (!targetApp) return;
+		selectedApp.classList.remove(CLASS_LIST_ITEM_SELECTED);
+		targetApp.classList.add(CLASS_LIST_ITEM_SELECTED);
+	} else {
+		document.querySelector(`.${CLASS_LIST_ITEM}`).classList.add(CLASS_LIST_ITEM_SELECTED);
+	}
 }
 
 /**
@@ -27,11 +77,14 @@ function setEvent() {
  */
 function search() {
 	const value = input.value.toLowerCase();
+	if (value === inputValue) return;
+
 	let tmpItems = [];
-	if(value === '') {
+	inputValue = value;
+	if (inputValue === '') {
 		tmpItems = appData.items;
 	} else {
-		tmpItems = getItems(value)
+		tmpItems = getItems(inputValue)
 	}
 	createList(tmpItems);
 }
