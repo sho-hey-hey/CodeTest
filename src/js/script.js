@@ -231,8 +231,6 @@ function initialize() {
 		'https://line.me/en/family-apps',
 		(data) => {
 			appData = data;
-			console.log('connected');
-			console.log(data);
 			createList(appData.items);
 			setEvent();
 		}
