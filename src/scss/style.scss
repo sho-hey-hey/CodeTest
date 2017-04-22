@@ -1,9 +1,14 @@
+@import "color";
 @import "reset";
 @import "parts";
 
 .content {
 	display: block;
-	margin: 10px;
+	margin: 6px;
+
+	&__search {
+		position: relative;
+	}
 }
 
 .input-list {
@@ -21,8 +26,43 @@
 }
 
 .search-list {
-	
+	position: absolute;
+	width: 96%;
+	max-width: 300px;
+	max-height: 400px;
+	margin: 0 auto;
+	top: 100%;
+	left: 0;
+	right: 0;
+	transition: linear 200ms transform, linear 200ms opacity;
+	transform: translateY(0) scale(1, 1);
+	opacity: 1;
+	overflow: scroll;
+
 	&--hide {
-		display: none;
+		transform: translateY(-50%) scale(1, 0);
+		opacity: 0;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		padding: 6px;
+		box-sizing: border-box;
+		border: 1px $baseColor solid;
+		border-bottom: 1px transparent solid;
+		background-color: #e4e4e4;
+
+		&:last-of-type {
+			border-bottom: 1px $baseColor solid;
+		}
+
+		&-img {
+			
+		}
+
+		&-name {
+			margin-left: 6px;
+		}
 	}
 }
