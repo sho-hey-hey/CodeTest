@@ -1,4 +1,5 @@
 import { asyncConnect } from './asyncService';
+import { LocalStorageService } from './localStorageService';
 
 const CLASS_LIST_HIDE = 'search-list--hide';
 const CLASS_LIST_ITEM = 'search-list__item';
