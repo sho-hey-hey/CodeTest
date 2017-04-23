@@ -58,10 +58,18 @@
 
 		&--history {
 			background-color: #def1fb;
+
+			& > .search-list__item-remove{
+				background-color: #ebf7fd;
+			}
 		}
 
 		&--selected {
 			background-color: #5af170;
+
+			& > .search-list__item-remove{
+				background-color: #9cf7a9;
+			}
 		}
 
 		&-img {
@@ -99,7 +107,7 @@
 			text-align: center;
 			box-sizing: border-box;
 			border-left: 1px rgba(123, 123, 123, 0.4) solid;
-			background-color: #f5b19b;
+			background-color: #deffec;
 			transition: 200ms linear transform;
 			transform: translate(0, 0) scale(1, 1);
 
