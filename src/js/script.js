@@ -10,6 +10,8 @@ let input;
 let inputValue = '';
 let searchList;
 let appData = {};
+let enableMouseMoveEventTimerId = 0;
+let enableMouseMoveEvent = true;
 
 /**
  * 要素の設定
@@ -70,7 +72,7 @@ function keyEventVisibleList(keyCode) {
  */
 function mouseMoveList(e) {
 	const target = e.target;
-	if (!target.classList.contains(CLASS_LIST_ITEM) || target.classList.contains(CLASS_LIST_ITEM_SELECTED)) return;
+	if (!target.classList.contains(CLASS_LIST_ITEM) || target.classList.contains(CLASS_LIST_ITEM_SELECTED) || !enableMouseMoveEvent) return;
 
 	const items = searchList.querySelectorAll(`.${CLASS_LIST_ITEM_SELECTED}`);
 	for (let i = 0, len = items.length; i < len; ++i) {
@@ -88,8 +90,23 @@ function changeSelectedItem(isNext) {
 	if (selectedApp) {
 		const targetApp = isNext ? selectedApp.nextElementSibling : selectedApp.previousElementSibling;
 		if (!targetApp) return;
+		const listHeight = searchList.clientHeight;
+		const listScrollTop = searchList.scrollTop;
+		const targetHeight = targetApp.clientHeight;
+		const targetTop = targetApp.offsetTop;
+
 		selectedApp.classList.remove(CLASS_LIST_ITEM_SELECTED);
 		targetApp.classList.add(CLASS_LIST_ITEM_SELECTED);
+
+		// 一定時間リスト上ののmoveイベントを効かないようにする
+		enableMouseMoveEvent = false;
+		clearTimeout(enableMouseMoveEventTimerId);
+		enableMouseMoveEventTimerId = setTimeout(() => { enableMouseMoveEvent = true; }, 200);
+		if (listScrollTop > targetTop) {
+			searchList.scrollTop = targetTop;
+		} else if (listScrollTop + listHeight < targetTop + targetHeight) {
+			searchList.scrollTop = targetTop + targetHeight - listHeight;
+		}
 	} else {
 		document.querySelector(`.${CLASS_LIST_ITEM}`).classList.add(CLASS_LIST_ITEM_SELECTED);
 	}
