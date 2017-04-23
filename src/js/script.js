@@ -28,6 +28,7 @@ function setEvent() {
 	input.addEventListener('keyup', () => { search(); }, false);
 	input.addEventListener('focus', focusIn, false);
 	searchList.addEventListener('mousemove', mouseMoveList, false);
+	searchList.addEventListener('scroll', hideRemoveButton, false);
 	document.addEventListener('click', focusOut, true);
 	document.addEventListener('keydown', keyDown, false);
 }
