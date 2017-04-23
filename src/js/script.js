@@ -25,11 +25,11 @@ function setElement() {
  * イベント設定
  */
 function setEvent() {
-	input.addEventListener('keyup', () => { search(); }, false);
 	input.addEventListener('focus', focusIn, false);
-	searchList.addEventListener('mousemove', mouseMoveList, false);
 	searchList.addEventListener('scroll', hideRemoveButton, false);
+	document.addEventListener('mousemove', mouseMoveList, false);
 	document.addEventListener('click', focusOut, true);
+	document.addEventListener('keyup', keyUp, false);
 	document.addEventListener('keydown', keyDown, false);
 }
 
@@ -41,6 +41,18 @@ function keyDown(e) {
 	const keyCode = e.code;
 	keyEventVisibleList(keyCode);
 }
+
+/**
+ * KeyUpイベント
+ * @param {KeyEvent} e 
+ */
+function keyUp(e) {
+	const target = e.target;
+	if(input === target) {
+		search();
+	}
+}
+
 
 /**
  * リストが表示されているときに受けるイベント
@@ -58,8 +70,8 @@ function keyEventVisibleList(keyCode) {
 			case 'Enter':
 				const selectedItem = searchList.querySelector(`.${CLASS_LIST_ITEM_SELECTED}`);
 				const id = selectedItem ? +selectedItem.dataset['id'] : null;
-				setInputValue(id);
 				entryLog(id);
+				setInputValue(id);
 				break;
 			default:
 				break;
@@ -73,7 +85,12 @@ function keyEventVisibleList(keyCode) {
  */
 function mouseMoveList(e) {
 	const target = e.target;
-	if (!target.classList.contains(CLASS_LIST_ITEM) || target.classList.contains(CLASS_LIST_ITEM_SELECTED) || !enableMouseMoveEvent) return;
+	if (
+		!isTargetElement(target, searchList) ||
+		!target.classList.contains(CLASS_LIST_ITEM) ||
+		target.classList.contains(CLASS_LIST_ITEM_SELECTED) ||
+		!enableMouseMoveEvent
+	) return;
 
 	const items = searchList.querySelectorAll(`.${CLASS_LIST_ITEM_SELECTED}`);
 	for (let i = 0, len = items.length; i < len; ++i) {
@@ -182,22 +199,29 @@ function focusIn(e) {
  * @param {MouseEvent} e 
  */
 function focusOut(e) {
-	const ID_CONTENT_SEARCH = 'contentSearch';
-	let target = e.target;
-	let tagName = target.tagName.toLowerCase();
-	let noFocusOut = false;
-	while (tagName !== 'html' && !noFocusOut) {
-		if (target.id === ID_CONTENT_SEARCH) {
-			noFocusOut = true;
-		}
-		target = target.parentElement;
-		tagName = target.tagName.toLowerCase();
-	}
-
-	if (!noFocusOut) {
+	if (!isTargetElement(e.target, document.getElementById('contentSearch'))) {
 		hideRemoveButton();
 		searchList.classList.add(CLASS_LIST_HIDE);
 	}
+}
+
+/**
+ * 対象の要素が親要素に存在するかどうかを簡易的(座標は考慮せず)に調べる
+ * @param {HTMLElement} currentElement 
+ * @param {HTMLElement} targetElement 
+ */
+function isTargetElement(currentElement, targetElement) {
+	let tagName = currentElement.tagName.toLowerCase();
+	let isTarget = false;
+	while (tagName !== 'html' && !isTarget) {
+		if (currentElement === targetElement) {
+			isTarget = true;
+		}
+		currentElement = currentElement.parentElement;
+		tagName = currentElement.tagName.toLowerCase();
+	}
+
+	return isTarget;
 }
 
 /**
@@ -210,8 +234,8 @@ function listItemClick(e) {
 	// モバイルで文字入力途中の場合入力文字を残さないために遅延させる
 	input.blur();
 	setTimeout(() => {
-		setInputValue(id);
 		entryLog(id);
+		setInputValue(id);
 	}, 20);
 }
 
