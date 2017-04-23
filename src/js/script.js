@@ -189,8 +189,12 @@ function focusOut(e) {
 function listItemClick(e) {
 	const target = e.currentTarget;
 	const id = +target.dataset['id'];
-	setInputValue(id);
-	entryLog(id);
+	// モバイルで文字入力途中の場合入力文字を残さないために遅延させる
+	input.blur();
+	setTimeout(() => {
+		setInputValue(id);
+		entryLog(id);
+	}, 20);
 }
 
 /**
