@@ -1,6 +1,4 @@
-const xhr = new XMLHttpRequest();
-
-xhr.open = (callback, url) => {
+XMLHttpRequest.prototype.open = (callback, url) => {
 	let result = {};
 
 	switch (url) {
@@ -16,6 +14,8 @@ xhr.open = (callback, url) => {
 	}
 	setTimeout(() => { callback(result); }, 1000);
 };
+
+const xhr = new XMLHttpRequest();
 
 function getFamilyAppData() {
 	return {
