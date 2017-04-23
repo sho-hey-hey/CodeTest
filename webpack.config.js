@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path')
-
 module.exports = {
 	context: __dirname + '/src/js',
 	entry: {
@@ -11,13 +9,6 @@ module.exports = {
 		path: __dirname + '/js',
 		filename: '[name].js'
 	},
-	// resolve: {
-	// 	modules: [
-	// 		'node_modules',
-	// 		path.resolve(__dirname, 'src')
-	// 	],
-	// 	extensions: ['.js'],
-	// },
 	module: {
 		loaders: [{
 			test: /\.js$/,
