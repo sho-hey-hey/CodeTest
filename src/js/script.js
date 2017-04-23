@@ -23,7 +23,7 @@ function setElement() {
  * イベント設定
  */
 function setEvent() {
-	input.addEventListener('keyup', search, false);
+	input.addEventListener('keyup', () => { search(); }, false);
 	input.addEventListener('focus', focusIn, false);
 	searchList.addEventListener('mousemove', mouseMoveList, false);
 	document.addEventListener('click', focusOut, true);
