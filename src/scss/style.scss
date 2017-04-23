@@ -50,18 +50,18 @@
 		align-items: center;
 		padding: 6px;
 		box-sizing: border-box;
-		background-color: #e4e4e4;
+		background-color: #deffec;
 
 		& + &{
 			border-top: 1px rgba(123, 123, 123, 0.4) solid;
 		}
 
 		&--history {
-			background-color: #a2ebf3;
+			background-color: #def1fb;
 		}
 
 		&--selected {
-			background-color: #9dce8c;
+			background-color: #5af170;
 		}
 
 		&-img {
@@ -96,10 +96,10 @@
 			right: 0;
 			padding: 6px;
 			line-height: 1.2em;
-			color: #ececec;
 			text-align: center;
 			box-sizing: border-box;
-			background-color: #dc704e;
+			border-left: 1px rgba(123, 123, 123, 0.4) solid;
+			background-color: #f5b19b;
 			transition: 200ms linear transform;
 			transform: translate(0, 0) scale(1, 1);
 
