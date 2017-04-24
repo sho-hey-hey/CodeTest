@@ -4,6 +4,7 @@ import { LocalStorageService } from './localStorageService';
 const CLASS_LIST_HIDE = 'search-list--hide';
 const CLASS_LIST_ITEM = 'search-list__item';
 const CLASS_LIST_ITEM_SELECTED = `${CLASS_LIST_ITEM}--selected`;
+const CLASS_LIST_ITEM_BUTTON = `${CLASS_LIST_ITEM}-button`;
 const CLASS_LIST_ITEM_REMOVE = `${CLASS_LIST_ITEM}-remove`;
 const CLASS_LIST_ITEM_REMOVE_HIDE = `${CLASS_LIST_ITEM_REMOVE}--hide`;
 let input;
@@ -27,10 +28,51 @@ function setElement() {
 function setEvent() {
 	input.addEventListener('focus', focusIn, false);
 	searchList.addEventListener('scroll', hideRemoveButton, false);
-	document.addEventListener('mousemove', mouseMoveList, false);
+	searchList.addEventListener('click', clickSearchList, false);
+	searchList.addEventListener('mousemove', mouseMoveSearchList, false);
 	document.addEventListener('click', focusOut, true);
 	document.addEventListener('keyup', keyUp, false);
 	document.addEventListener('keydown', keyDown, false);
+}
+
+/**
+ * リストクリックイベント
+ * @param {MouseEvent} e 
+ */
+function clickSearchList(e) {
+	let target = e.target;
+	while (searchList !== target) {
+		// 削除ボタンを押したときのメソッドを返す
+		if(target.classList.contains(CLASS_LIST_ITEM_REMOVE)) {
+			console.log(`you clicked ".${CLASS_LIST_ITEM_REMOVE}" element`);
+			const id = +target.parentElement.dataset['id'];
+			target.classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
+			LocalStorageService.removeItem(`${id}`);
+			search(true);
+			break;
+		}
+
+		// 削除確認ボタンをおした時のメソッドを返す
+		if(target.classList.contains(CLASS_LIST_ITEM_BUTTON)) {
+			hideRemoveButton();
+			target.nextElementSibling.classList.remove(CLASS_LIST_ITEM_REMOVE_HIDE);
+			break;
+		}
+
+		// リストの項目をクリックしたときの処理
+		if(target.classList.contains(CLASS_LIST_ITEM)) {
+			const id = +target.dataset['id'];
+			// モバイルで文字入力途中の場合入力文字を残さないために遅延させる
+			input.blur();
+			setTimeout(() => {
+				entryLog(id);
+				setInputValue(id);
+			}, 20);
+			break;
+		}
+
+		target = target.parentElement;
+	}
 }
 
 /**
@@ -83,7 +125,7 @@ function keyEventVisibleList(keyCode) {
  * リストのmoveイベント
  * @param {MouseEvent} e 
  */
-function mouseMoveList(e) {
+function mouseMoveSearchList(e) {
 	const target = e.target;
 	if (
 		!isTargetElement(target, searchList) ||
@@ -138,32 +180,6 @@ function hideRemoveButton() {
 	for (let i = 0, len = removeButtons.length; i < len; ++i) {
 		removeButtons[i].classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
 	}
-}
-
-/**
- * 削除確認ボタンをおした時のメソッドを返す
- * @param {HTMLElement} removeButton 
- */
-function clickRemoveConfirmButton(removeButton) {
-	return (e) => {
-		e.stopPropagation();
-		hideRemoveButton();
-		removeButton.classList.remove(CLASS_LIST_ITEM_REMOVE_HIDE);
-	};
-}
-
-/**
- * 削除ボタンを押したときのメソッドを返す
- * @param {number} id 
- * @param {HTMLElement} removeButton 
- */
-function clickRemoveButton(id, removeButton) {
-	return (e) => {
-		e.stopPropagation();
-		removeButton.classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
-		LocalStorageService.removeItem(`${id}`);
-		search(true);
-	};
 }
 
 /**
@@ -222,21 +238,6 @@ function isTargetElement(currentElement, targetElement) {
 	}
 
 	return isTarget;
-}
-
-/**
- * リストの項目をクリックしたときの処理
- * @param {MouseEvent} e 
- */
-function listItemClick(e) {
-	const target = e.currentTarget;
-	const id = +target.dataset['id'];
-	// モバイルで文字入力途中の場合入力文字を残さないために遅延させる
-	input.blur();
-	setTimeout(() => {
-		entryLog(id);
-		setInputValue(id);
-	}, 20);
 }
 
 /**
@@ -361,7 +362,6 @@ function createList(items) {
 		itemElem.classList.add(CLASS_LIST_ITEM);
 		itemElem.dataset['id'] = item.id;
 		itemElem.title = item.name;
-		itemElem.addEventListener('click', listItemClick, false);
 
 		itemImgElem.classList.add('search-list__item-img');
 		itemImgElem.src = item.logo;
@@ -380,11 +380,9 @@ function createList(items) {
 			itemElem.classList.add('search-list__item--history');
 			itemDeleteConfirmElem.classList.add('search-list__item-button');
 			itemDeleteConfirmElem.innerText = '×';
-			itemDeleteConfirmElem.addEventListener('click', clickRemoveConfirmButton(itemDeleteElem), false);
 			itemDeleteElem.classList.add(CLASS_LIST_ITEM_REMOVE);
 			itemDeleteElem.classList.add(CLASS_LIST_ITEM_REMOVE_HIDE);
 			itemDeleteElem.innerHTML = 'remove<br>history';
-			itemDeleteElem.addEventListener('click', clickRemoveButton(item.id, itemDeleteElem), false);
 
 			itemElem.appendChild(itemDeleteConfirmElem);
 			itemElem.appendChild(itemDeleteElem);
